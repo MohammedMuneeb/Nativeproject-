@@ -15,7 +15,7 @@ import InlineTextButton from "../components/InlineTextButton";
 import {getAuth ,createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"; 
 import {initializeApp } from "firebase/app"; 
 import {auth } from "../firebase"; 
-export default function SignUp ({onNavigateSignIn }){ 
+export default function SignUp ({onNavigateSignIn ,onNavigateModalList }){ 
   const background =require ("../assets/background.jpg"); 
   let [username ,setUsername ]=React.useState (""); 
   let [password ,setPassword ]=React.useState (""); 
@@ -35,9 +35,13 @@ export default function SignUp ({onNavigateSignIn }){
   }; 
   let signUp =()=>{ 
  if (password ===confirmPassword ){createUserWithEmailAndPassword (auth ,email ,password ).then ((userCredential )=>{ 
-  sendEmailVerification (auth.currentUser ); 
- const user = userCredential.user ;}).catch ((error )=>{ 
- setValidationMessage (error.message );} );} 
+   
+sendEmailVerification (auth.currentUser ); 
+ const user = userCredential.user ; 
+ sendEmailVerification(auth.currentUser );  
+ navigation.navigate ("ToDo", {user :userCredential.user }); 
+}).catch ((error )=>{ 
+ setValidationMessage (error.message );});} 
  
   } 
   return ( 
@@ -62,7 +66,7 @@ export default function SignUp ({onNavigateSignIn }){
     onChangeText ={(value )=>validateAndSet (value ,confirmPassword ,setConfirmPassword )} 
     value ={confirmPassword } 
     secureTextEntry ={true   }/> 
-    <Text style ={AppStyles.lightText } >Already have any account ?</Text ><InlineTextButton text ="Sign In" 
+    <Text style ={AppStyles.lightText }>Already have any account ?</Text ><InlineTextButton text ="Sign In" 
     onPress ={onNavigateSignIn }/> 
     <Text style ={AppStyles.lightText } >Forgot Password ?</Text ><InlineTextButton text =""/> 
      <Button title ="Sign Up " color ="#f7b2ad"onPress ={signUp }/></KeyboardAvoidingView > 
